@@ -13,6 +13,9 @@ export const getVoterInfo = async (address: string) => {
 
   const response = await fetch(`${BASE_URL}/voterinfo?key=${CIVIC_API_KEY}&address=${encodeURIComponent(address)}`);
   if (!response.ok) {
+    if (address.toLowerCase().includes("india")) {
+      throw new Error("Direct polling data for India is best found on the official ECI Voter Service Portal (voters.eci.gov.in).");
+    }
     throw new Error("Failed to fetch voter information.");
   }
   return await response.json();

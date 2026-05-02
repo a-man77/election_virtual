@@ -37,10 +37,10 @@ const Home: React.FC = () => {
           style={{ flex: '1 1 500px' }}
         >
           <h1 style={{ fontSize: '4.5rem', lineHeight: 1.1, marginBottom: '2rem' }}>
-            Empowering Every <span className="gradient-text">Voter's Voice</span>
+            Empowering Every <span className="gradient-text">Indian Citizen</span>
           </h1>
           <p style={{ fontSize: '1.25rem', color: 'var(--text-muted)', marginBottom: '2.5rem', maxWidth: '600px' }}>
-            The ultimate AI-powered companion for your electoral journey. Get personalized guidance, find your polling station, and stay informed with Gemini-driven insights.
+            Your ultimate AI-powered companion for the Indian General Elections. Get personalized guidance on Voter ID, find your polling booth, and stay updated with the Election Commission of India (ECI) process.
           </p>
           
           <div className="glass" style={{ padding: '0.5rem', display: 'flex', gap: '0.5rem', marginBottom: '2rem', maxWidth: '500px' }}>

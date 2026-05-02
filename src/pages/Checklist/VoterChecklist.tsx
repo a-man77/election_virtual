@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle2, Circle, ExternalLink, Download, Share2 } from 'lucide-react';
+import { CheckCircle2, Circle, ExternalLink, Download, Share2, Loader2 } from 'lucide-react';
+import { auth, db } from '../../services/firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 interface Task {
   id: number;
@@ -11,18 +13,61 @@ interface Task {
 }
 
 const initialTasks: Task[] = [
-  { id: 1, title: 'Check Voter Registration Status', deadline: 'Oct 19, 2026', completed: false, link: 'https://vote.gov' },
-  { id: 2, title: 'Request Mail-in Ballot', deadline: 'Oct 27, 2026', completed: false, link: 'https://vote.gov' },
-  { id: 3, title: 'Research Local Candidates', deadline: 'Nov 2, 2026', completed: false, link: 'https://ballotpedia.org' },
-  { id: 4, title: 'Locate Polling Station', deadline: 'Nov 2, 2026', completed: false, link: '/map' },
-  { id: 5, title: 'Cast Your Vote', deadline: 'Nov 3, 2026', completed: false, link: '/map' },
+  { id: 1, title: 'Check Name in Electoral Roll', deadline: 'Jan 15, 2026', completed: false, link: 'https://electoralsearch.eci.gov.in/' },
+  { id: 2, title: 'Apply for New Voter ID (Form 6)', deadline: 'Feb 28, 2026', completed: false, link: 'https://voters.eci.gov.in/' },
+  { id: 3, title: 'Link Aadhaar with Voter ID', deadline: 'March 15, 2026', completed: false, link: 'https://voters.eci.gov.in/' },
+  { id: 4, title: 'Download e-EPIC Card', deadline: 'April 30, 2026', completed: false, link: 'https://voters.eci.gov.in/' },
+  { id: 5, title: 'Find Your Polling Booth', deadline: 'May 10, 2026', completed: false, link: '/map' },
 ];
 
 const VoterChecklist: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const [loading, setLoading] = useState(false);
+  const user = auth.currentUser;
 
-  const toggleTask = (id: number) => {
-    setTasks(tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
+  // Load tasks from Firestore
+  useEffect(() => {
+    const loadTasks = async () => {
+      if (user) {
+        setLoading(true);
+        try {
+          const docRef = doc(db, 'userChecklists', user.uid);
+          const docSnap = await getDoc(docRef);
+          
+          if (docSnap.exists()) {
+            setTasks(docSnap.data().tasks);
+          } else {
+            // Initialize Firestore with default tasks
+            await setDoc(docRef, { tasks: initialTasks });
+          }
+        } catch (error) {
+          console.error("Error loading checklist:", error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    const unsubscribe = auth.onAuthStateChanged((u) => {
+      if (u) loadTasks();
+      else setTasks(initialTasks);
+    });
+
+    return unsubscribe;
+  }, [user]);
+
+  const toggleTask = async (id: number) => {
+    const newTasks = tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t);
+    setTasks(newTasks);
+
+    if (user) {
+      try {
+        const docRef = doc(db, 'userChecklists', user.uid);
+        await setDoc(docRef, { tasks: newTasks }, { merge: true });
+      } catch (error) {
+        console.error("Error updating checklist:", error);
+      }
+    }
   };
 
   const progress = Math.round((tasks.filter(t => t.completed).length / tasks.length) * 100);
@@ -56,7 +101,11 @@ const VoterChecklist: React.FC = () => {
 
         {/* Tasks List */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          {tasks.map((task) => (
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '3rem' }}>
+              <Loader2 className="animate-spin" size={32} />
+            </div>
+          ) : tasks.map((task) => (
             <motion.div 
               key={task.id}
               whileHover={{ scale: 1.01 }}

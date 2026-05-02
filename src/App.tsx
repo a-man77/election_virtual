@@ -18,7 +18,7 @@ const App: React.FC = () => {
     { path: '/timeline', label: 'Timeline', icon: <Calendar size={20} /> },
     { path: '/checklist', label: 'Checklist', icon: <CheckSquare size={20} /> },
     { path: '/qa', label: 'Ask Gemini', icon: <MessageSquare size={20} /> },
-    { path: '/map', label: 'Polling Places', icon: <MapPin size={20} /> },
+    { path: '/map', label: 'Polling Booths', icon: <MapPin size={20} /> },
   ];
 
   return (
