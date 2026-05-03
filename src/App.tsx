@@ -40,11 +40,11 @@ const App: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   const navLinks = [
-    { path: '/', label: 'Home', icon: <Vote size={18} /> },
-    { path: '/timeline', label: 'Timeline', icon: <Calendar size={18} /> },
-    { path: '/checklist', label: 'Checklist', icon: <CheckSquare size={18} /> },
-    { path: '/qa', label: 'Ask Gemini', icon: <MessageSquare size={18} /> },
-    { path: '/map', label: 'Polling Booths', icon: <MapPin size={18} /> },
+    { to: '/', label: 'Home', icon: <Vote size={18} /> },
+    { to: '/timeline', label: 'Timeline', icon: <Calendar size={18} /> },
+    { to: '/checklist', label: 'Checklist', icon: <CheckSquare size={18} /> },
+    { to: '/qa', label: 'Ask Gemini', icon: <MessageSquare size={18} /> },
+    { to: '/map', label: 'Polling Booths', icon: <MapPin size={18} /> },
   ];
 
   return (
@@ -64,7 +64,7 @@ const App: React.FC = () => {
             {/* Desktop Nav */}
             <div className="desktop-nav" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
               {navLinks.map((link) => (
-                <NavLink key={link.path} {...link} />
+                <NavLink key={link.to} {...link} />
               ))}
             </div>
 
@@ -109,8 +109,8 @@ const App: React.FC = () => {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', paddingTop: '1.5rem' }}>
                   {navLinks.map((link) => (
                     <Link 
-                      key={link.path} 
-                      to={link.path} 
+                      key={link.to} 
+                      to={link.to} 
                       onClick={() => setIsMenuOpen(false)}
                       style={{ 
                         display: 'flex', 
